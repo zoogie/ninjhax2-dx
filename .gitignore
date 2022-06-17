@@ -1,6 +1,4 @@
-build
 *.elf
-*.txt
 *.map
 *.o
 p/*.bin
