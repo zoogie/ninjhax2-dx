@@ -6,7 +6,6 @@ cn_initial.bin
 cn_qr_initial_loader.bin
 menu_payload/*.bin
 menu_payload_loadropbin*
-cn_save_initial_loader/*.bin
 cn_save_initial_loader/cn_initial/*.bin
 app_code_reloc.s
 debug

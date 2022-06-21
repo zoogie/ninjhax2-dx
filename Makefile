@@ -36,9 +36,9 @@ QRCODE_TARGET0	:=	q/$(OUTNAME).png
 
 SCRIPTS = "scripts"
 
-.PHONY: directories all menu_ropdb build/constants firm_constants/constants.txt cn_constants/constants.txt region_constants/constants.txt menu_ropdb/ropdb.txt menu_payload/menu_payload_loadropbin.bin cn_qr_initial_loader/cn_qr_initial_loader.bin.png 
+.PHONY: directories all menu_ropdb build/constants firm_constants/constants.txt cn_constants/constants.txt region_constants/constants.txt menu_ropdb/ropdb.txt menu_payload/menu_payload_loadropbin.bin cn_save_initial_loader/cn_save_initial_loader.bin cn_qr_installer/cn_qr_installer.bin.png
 
-all: directories build/constants $(QRCODE_TARGET0)
+all: directories build/constants build/cn_save_initial_loader.bin $(QRCODE_TARGET0)
 directories:
 	@mkdir -p build
 	@mkdir -p q
@@ -61,15 +61,21 @@ menu_ropdb/ropdb.txt: menu_ropdb/$(MENUVERSION)_ropdb.txt
 build/constants: firm_constants/constants.txt cn_constants/constants.txt region_constants/constants.txt menu_ropdb/ropdb.txt
 	@python $(SCRIPTS)/makeHeaders.py $(FIRMVERSION) $(CNVERSION) $(MSETVERSION) $(ROVERSION) $(MENUVERSION) $(REGION) $(OUTNAME) build/constants $^
 	@cd menu_payload && make
-	@cp menu_payload/menu_payload_loadropbin.bin cn_qr_initial_loader/$(CNVERSION)/cn_initial/data
+	@cp menu_payload/menu_payload_loadropbin.bin cn_save_initial_loader/cn_initial/data/
 
-build/cn_qr_initial_loader.bin.png: cn_qr_initial_loader/cn_qr_initial_loader.bin.png
-	@cp cn_qr_initial_loader/cn_qr_initial_loader.bin.png build
-cn_qr_initial_loader/cn_qr_initial_loader.bin.png:
-	@cd cn_qr_initial_loader && make
+q/$(OUTNAME).png: build/cn_qr_installer.bin.png
+	@cp build/cn_qr_installer.bin.png q/$(OUTNAME).png
 
-q/$(OUTNAME).png: build/cn_qr_initial_loader.bin.png
-	@cp build/cn_qr_initial_loader.bin.png q/$(OUTNAME).png
+build/cn_save_initial_loader.bin: cn_save_initial_loader/cn_save_initial_loader.bin
+	@cp cn_save_initial_loader/cn_save_initial_loader.bin build
+	@cp cn_save_initial_loader/cn_save_initial_loader.bin cn_qr_installer/
+cn_save_initial_loader/cn_save_initial_loader.bin:
+	@cd cn_save_initial_loader && make
+	@cp cn_save_initial_loader/cn_save_initial_loader.bin cn_qr_installer/data.bin
+	
+build/cn_qr_installer.bin.png: cn_qr_installer/cn_qr_installer.bin.png
+	@cd cn_qr_installer && make
+	@cp cn_qr_installer/cn_qr_installer.bin.png build
 
 clean:
 	@rm -rf build/*
@@ -77,6 +83,7 @@ clean:
 	@cd cn_constants && make clean
 	@cd region_constants && make clean
 	@cd menu_ropdb && make clean
-	@cd cn_qr_initial_loader && make clean
+	@cd cn_qr_installer && make clean
+	@cd cn_save_initial_loader && make clean
 	@cd menu_payload && make clean
 	@echo "all cleaned up !"

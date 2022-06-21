@@ -10,17 +10,12 @@ ifeq ($(filter $(DEVKITARM)/bin,$(PATH)),)
 export PATH:=$(DEVKITARM)/bin:$(PATH)
 endif
 
-SCRIPTS = "../../scripts"
-NAME = cn_qr_initial_loader
+SCRIPTS = "../scripts"
+NAME = cn_save_initial_loader
 
 .PHONY: all cn_initial/cn_initial.bin
 
-all: $(NAME).bin.png
-
-%.bin.png: %.bin
-	@python $(SCRIPTS)/obfuscator5000.py $<
-	@python $(SCRIPTS)/crypt.py $< $(SCRIPTS)
-	@$(SCRIPTS)/qrcode.exe -8 -o $@ < tmp
+all: $(NAME).bin
 
 clean:
 	@cd cn_initial && make clean
@@ -30,8 +25,8 @@ clean:
 -include $(DFILES)
 
 $(NAME).bin: sploit_proto.bin sploit.s cn_initial/cn_initial.bin
-	armips sploit.s
+	@armips sploit.s
+	@python $(SCRIPTS)/obfuscator5000.py $<
 
 cn_initial/cn_initial.bin:
-	# probably a bad idea; dependencies won't work well i guess
 	$(MAKE) -C cn_initial

@@ -8,7 +8,7 @@
 #define LOADROPBIN
 #define N3DS 0
 
-#include "../../../../build/constants.h"
+#include "../../../build/constants.h"
 //#include "../../../../app_targets/app_targets.h"
 //#include "decomp.h"
 #include "menu_payload_loadropbin_bin.h"
@@ -17,10 +17,12 @@
 #define TOPFBADR1 ((u8*)CN_TOPFBADR1)
 #define TOPFBADR2 ((u8*)CN_TOPFBADR2)
 
+/*
 void _memset(void *s, int c, int n){  //this is my recollection of memset. i'm sure it's not very good lol.
 	
-	while(n--) *(u8*)s=(u8)c;
+	while(n--) *(u8*)s++=(u8)c;
 }
+*/
 
 int _strlen(char* str)
 {
@@ -208,7 +210,7 @@ int _main()
 		const u32 block_paddr = (start_paddr - 4 * 4) & ~0xff;
 		const u32 start_offset = start_paddr - block_paddr;
 
-		_memset(linear_buffer, 0x00, block_size);
+		//_memset(linear_buffer, 0x00, block_size);
 
 
 		// takeover stuff

