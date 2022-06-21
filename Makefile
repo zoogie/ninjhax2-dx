@@ -1,10 +1,6 @@
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
-export CTRULIB=$(shell pwd)/libctru
-ifeq ($(strip $(CTRULIB)),)
-$(error "Please set CTRULIB in your environment. export CTRULIB=<path to>ctrulib/libctru")
-endif
 
 ifeq ($(filter $(DEVKITARM)/bin,$(PATH)),)
 export PATH:=$(DEVKITARM)/bin:$(PATH)

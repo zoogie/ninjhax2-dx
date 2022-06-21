@@ -2,10 +2,6 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-ifeq ($(strip $(CTRULIB)),)
-$(error "Please set CTRULIB in your environment. export DEVKITARM=<path to>ctrulib/libctru")
-endif
-
 ifeq ($(filter $(DEVKITARM)/bin,$(PATH)),)
 export PATH:=$(DEVKITARM)/bin:$(PATH)
 endif
@@ -15,7 +11,7 @@ CC = arm-none-eabi-gcc
 LINK = arm-none-eabi-ld
 AS = arm-none-eabi-as
 OBJCOPY = arm-none-eabi-objcopy
-CFLAGS += -Wall -std=c99 -fno-tree-loop-distribute-patterns -march=armv6 -mthumb -Os -I"$(CTRULIB)/include" -I$(DEVKITPRO)/libnds/include
+CFLAGS += -Wall -std=c99 -fno-tree-loop-distribute-patterns -march=armv6 -mthumb -Os -I$(DEVKITPRO)/libnds/include
 LDFLAGS += --script=ccd00.ld -L"$(DEVKITARM)/arm-none-eabi/lib" -L"$(CTRULIB)/lib" -Map=output.map
 
 ifneq ($(strip $(QRINSTALLER)),)
@@ -49,14 +45,11 @@ all: dirs $(PROJECTNAME).bin
 dirs:
 	@mkdir -p build
 
-ctrulib:
-	cd "$(CTRULIB)" && make
-
 $(PROJECTNAME).bin: $(PROJECTNAME).elf
 	$(OBJCOPY) -O binary $< $@
 
-$(PROJECTNAME).elf: $(OFILES) ctrulib
-	$(LINK) $(LDFLAGS) -o $(PROJECTNAME).elf $(filter-out build/crt0.o, $(OFILES)) -g -lctru -lm
+$(PROJECTNAME).elf: $(OFILES)
+	$(LINK) $(LDFLAGS) -o $(PROJECTNAME).elf $(filter-out build/crt0.o, $(OFILES)) -g -lm
 
 clean:
 	@rm -f build/*.o build/*.d

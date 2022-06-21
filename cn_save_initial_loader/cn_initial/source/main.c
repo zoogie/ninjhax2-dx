@@ -1,12 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctr/types.h>
-#include <ctr/srv.h>
-#include <ctr/svc.h>
-//#include "text.h"
+//#include <ctr/types.h>
+//#include <ctr/srv.h>
+//#include <ctr/svc.h>
+#include "types.h"
 #define LOADROPBIN
 #define N3DS 0
+
+ u32* getThreadCommandBuffer(void);
+ void svc_sleepThread(s64 ns);
+ Result svc_closeHandle(Handle handle);
+ Result svc_sendSyncRequest(Handle session);
+
 
 #include "../../../build/constants.h"
 //#include "../../../../app_targets/app_targets.h"
