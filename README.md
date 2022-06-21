@@ -31,4 +31,5 @@ Prep: You need a USA, EUR, or JPN old/new 3DS and a copy of Cubic Ninja for your
 
 # Thanks
 * Smealum - for Ninjhax, libctru and many other cool 3DS things over the years
+* Luigoalma - there's no obscure compiler error that this foxo can't fix!
 * Everyone - best developer ever :p
